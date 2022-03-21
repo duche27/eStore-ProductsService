@@ -1,7 +1,8 @@
-package com.gui.productservice.model;
+package com.gui.productservice.aggregates;
 
 import com.gui.productservice.commands.CreateProductCommand;
 import com.gui.productservice.core.events.ProductCreatedEvent;
+import com.gui.productservice.exceptions.PriceLowerThanZeroException;
 import lombok.RequiredArgsConstructor;
 import org.axonframework.commandhandling.CommandHandler;
 import org.axonframework.eventsourcing.EventSourcingHandler;
@@ -24,11 +25,11 @@ public class ProductAggregate {
     public ProductAggregate() { }
 
     @CommandHandler
-    public ProductAggregate(CreateProductCommand createProductCommand) {
+    public ProductAggregate(CreateProductCommand createProductCommand) throws PriceLowerThanZeroException {
 
-        // validaciones
-        isPriceGreaterThanZero(createProductCommand.getPrice());
-        isTitleBlank(createProductCommand.getTitle());
+//        // validaciones
+//        isPriceGreaterThanZero(createProductCommand.getPrice());
+//        isTitleBlank(createProductCommand.getTitle());
 
         // creamos evento una vez pasadas las validaciones
         ProductCreatedEvent productCreatedEvent = new ProductCreatedEvent();
@@ -47,15 +48,15 @@ public class ProductAggregate {
         this.quantity = productCreatedEvent.getQuantity();
     }
 
-    private void isPriceGreaterThanZero(BigDecimal price) {
-        if (price.compareTo(BigDecimal.ZERO) <= 0) {
-            throw new IllegalArgumentException("Precio menor que cero");
-        }
-    }
-
-    private void isTitleBlank(String title) {
-        if (title.isBlank()) {
-            throw new IllegalArgumentException("Título vacío");
-        }
-    }
+//    private void isPriceGreaterThanZero(BigDecimal price) {
+//        if (price.compareTo(BigDecimal.ZERO) <= 0) {
+//            throw new PriceLowerThanZeroException("Precio menor que cero");
+//        }
+//    }
+//
+//    private void isTitleBlank(String title) {
+//        if (title.isBlank()) {
+//            throw new IllegalArgumentException("Título vacío");
+//        }
+//    }
 }

@@ -1,33 +1,32 @@
-package com.gui.productservice.rest;
+package com.gui.productservice.commands.rest;
 
 import com.gui.productservice.commands.CreateProductCommand;
-import com.gui.productservice.model.CreateProductRestModel;
+import com.gui.productservice.exceptions.PriceLowerThanZeroException;
 import lombok.extern.slf4j.Slf4j;
 import org.axonframework.commandhandling.gateway.CommandGateway;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.env.Environment;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
+import java.math.BigDecimal;
 import java.util.UUID;
 
 @Slf4j
 @RestController
 @RequestMapping("/products")
-public class ProductsController {
+public class ProductCommandController {
 
-    private final Environment env;
     private final CommandGateway commandGateway;
 
     @Autowired
-    public ProductsController(Environment env, CommandGateway commandGateway) {
-        this.env = env;
+    public ProductCommandController(CommandGateway commandGateway) {
         this.commandGateway = commandGateway;
     }
 
-    @PostMapping
-    public ResponseEntity<?> createProduct(@RequestBody CreateProductRestModel createProductRestModel) {
+    @PostMapping("newProduct")
+    public ResponseEntity<?> createProduct(@Valid @RequestBody CreateProductRestModel createProductRestModel) {
 
         CreateProductCommand createProductCommand = CreateProductCommand.builder()
                 .productId(UUID.randomUUID().toString())
@@ -36,22 +35,17 @@ public class ProductsController {
                 .title(createProductRestModel.getTitle())
                 .build();
 
-        // wait devuelve un objeto future sin esperar respuesta
-        // espera respuesta
-        // lo mandamos a nuestro aggregate que tiene el commandHandler
+        // WAIT devuelve un objeto future sin esperar respuesta - SENDandWAIT espera respuesta
+        // lo mandamos a nuestro AGGREGATE que tiene el COMMANDHANDLER
+        // pasa por el INTERCEPTOR
         try {
             commandGateway.sendAndWait(createProductCommand);
         } catch (Exception e) {
-            log.error("[createProduct] error al enviar el command de creación");
+            log.error("[createProduct] error al enviar el command de creación de producto");
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
         }
 
         return new ResponseEntity<>("lalala POST de " + createProductRestModel.getTitle() + " con id " + createProductCommand.getProductId(), HttpStatus.CREATED);
-    }
-
-    @GetMapping
-    public ResponseEntity<?> getProduct() {
-
-        return ResponseEntity.ok("toma product! En puerto: " + env.getProperty("local.server.port"));
     }
 
     @PutMapping

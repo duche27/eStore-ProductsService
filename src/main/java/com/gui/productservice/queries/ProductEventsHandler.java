@@ -3,6 +3,7 @@ package com.gui.productservice.queries;
 import com.gui.productservice.core.events.ProductCreatedEvent;
 import com.gui.productservice.model.ProductEntity;
 import com.gui.productservice.repositories.ProductRepository;
+import org.axonframework.config.ProcessingGroup;
 import org.axonframework.eventhandling.EventHandler;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
