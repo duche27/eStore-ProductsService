@@ -38,12 +38,13 @@ public class ProductCommandController {
         // WAIT devuelve un objeto future sin esperar respuesta - SENDandWAIT espera respuesta
         // lo mandamos a nuestro AGGREGATE que tiene el COMMANDHANDLER
         // pasa por el INTERCEPTOR
-        try {
-            commandGateway.sendAndWait(createProductCommand);
-        } catch (Exception e) {
-            log.error("[createProduct] error al enviar el command de creación de producto");
-            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
-        }
+        commandGateway.sendAndWait(createProductCommand);
+//        try {
+//            commandGateway.sendAndWait(createProductCommand);
+//        } catch (Exception e) {
+//            log.error("[createProduct] error al enviar el command de creación de producto");
+//            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+//        }
 
         return new ResponseEntity<>("lalala POST de " + createProductRestModel.getTitle() + " con id " + createProductCommand.getProductId(), HttpStatus.CREATED);
     }

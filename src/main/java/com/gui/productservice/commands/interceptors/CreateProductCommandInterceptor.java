@@ -43,7 +43,7 @@ public class CreateProductCommandInterceptor implements MessageDispatchIntercept
                                 " or title " + createProductCommand.getTitle() + " already exists");
             }
 
-            return  command;
+            return command;
         };
     }
 }

@@ -16,7 +16,7 @@ import java.math.BigDecimal;
 @Builder
 public class CreateProductRestModel {
 
-    @NotBlank(message = "Title must be informed")
+//    @NotBlank(message = "Title must be informed")
     private String title;
 
 //    @Min(value = 1, message = "Price must be above 0")

@@ -1,10 +1,12 @@
 package com.gui.productservice.queries;
 
 import com.gui.productservice.core.events.ProductCreatedEvent;
+import com.gui.productservice.exceptions.BlankTitleException;
 import com.gui.productservice.model.ProductEntity;
 import com.gui.productservice.repositories.ProductRepository;
 import org.axonframework.config.ProcessingGroup;
 import org.axonframework.eventhandling.EventHandler;
+import org.axonframework.messaging.interceptors.ExceptionHandler;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -20,6 +22,19 @@ public class ProductEventsHandler {
         this.productRepository = productRepository;
     }
 
+    // lanza la excepción controlada si no persiste productEntity
+    // sin persistir nada, es transaccional
+    // de aquí va a ProductServiceEventHandler - después a ProductErrorHandler - excepción controlada
+    @ExceptionHandler(resultType = Exception.class)
+    private void handle(Exception exception) throws Exception {
+        throw exception;
+    }
+
+    @ExceptionHandler(resultType = IllegalArgumentException.class)
+    private void handle(IllegalArgumentException exception) throws IllegalArgumentException {
+//        throw IllegalArgumentException;
+    }
+
     @EventHandler
     public void on(ProductCreatedEvent productCreatedEvent) {
 
@@ -27,6 +42,10 @@ public class ProductEventsHandler {
 
         BeanUtils.copyProperties(productCreatedEvent, productEntity);
 
-        productRepository.save(productEntity);
+        try {
+            productRepository.save(productEntity);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }

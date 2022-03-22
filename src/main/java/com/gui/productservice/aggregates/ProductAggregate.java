@@ -2,10 +2,11 @@ package com.gui.productservice.aggregates;
 
 import com.gui.productservice.commands.CreateProductCommand;
 import com.gui.productservice.core.events.ProductCreatedEvent;
+import com.gui.productservice.exceptions.BlankTitleException;
 import com.gui.productservice.exceptions.PriceLowerThanZeroException;
-import lombok.RequiredArgsConstructor;
 import org.axonframework.commandhandling.CommandHandler;
 import org.axonframework.eventsourcing.EventSourcingHandler;
+import org.axonframework.messaging.interceptors.ExceptionHandler;
 import org.axonframework.modelling.command.AggregateIdentifier;
 import org.axonframework.modelling.command.AggregateLifecycle;
 import org.axonframework.spring.stereotype.Aggregate;
@@ -25,7 +26,7 @@ public class ProductAggregate {
     public ProductAggregate() { }
 
     @CommandHandler
-    public ProductAggregate(CreateProductCommand createProductCommand) throws PriceLowerThanZeroException {
+    public ProductAggregate(CreateProductCommand createProductCommand) throws Exception {
 
         // validaciones
         isPriceGreaterThanZero(createProductCommand.getPrice());
@@ -56,7 +57,7 @@ public class ProductAggregate {
 
     private void isTitleBlank(String title) {
         if (title.isBlank()) {
-            throw new IllegalArgumentException("Título vacío");
+            throw new BlankTitleException("Título vacío");
         }
     }
 }
