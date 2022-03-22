@@ -1,7 +1,10 @@
 package com.gui.productservice.commands.interceptors;
 
 import com.gui.productservice.commands.CreateProductCommand;
+import com.gui.productservice.core.events.data.ProductLookupEntity;
+import com.gui.productservice.core.events.data.ProductLookupRepository;
 import com.gui.productservice.exceptions.PriceLowerThanZeroException;
+import com.gui.productservice.exceptions.ProductNotFoundException;
 import lombok.extern.slf4j.Slf4j;
 import org.axonframework.commandhandling.CommandMessage;
 import org.axonframework.messaging.MessageDispatchInterceptor;
@@ -15,6 +18,12 @@ import java.util.function.BiFunction;
 @Slf4j
 public class CreateProductCommandInterceptor implements MessageDispatchInterceptor<CommandMessage<?>> {
 
+    ProductLookupRepository productLookupRepository;
+
+    public CreateProductCommandInterceptor(ProductLookupRepository productLookupRepository) {
+        this.productLookupRepository = productLookupRepository;
+    }
+
     @Override
     public BiFunction<Integer, CommandMessage<?>, CommandMessage<?>> handle(
             List<? extends CommandMessage<?>> messages) {
@@ -24,27 +33,17 @@ public class CreateProductCommandInterceptor implements MessageDispatchIntercept
 
             log.info("COMMAND interceptado: " + command.getPayloadType());
 
-            // si es un createProductCommand validamos
+            // si es un createProductCommand pueden hacerse aquí las VALIDACIONES
             if (command.getPayloadType().equals(CreateProductCommand.class)) {
 
                 CreateProductCommand createProductCommand = (CreateProductCommand) command.getPayload();
 
-                isPriceGreaterThanZero(createProductCommand.getPrice());
-                isTitleBlank(createProductCommand.getTitle());
+                if (productLookupRepository.findByProductIdOrTitle(createProductCommand.getProductId(), createProductCommand.getTitle())
+                        .isPresent()) throw new ProductNotFoundException("Product with id "+ createProductCommand.getProductId() +
+                                " or title " + createProductCommand.getTitle() + " already exists");
             }
+
             return  command;
         };
-    }
-
-    private void isPriceGreaterThanZero(BigDecimal price) {
-        if (price.compareTo(BigDecimal.ZERO) <= 0) {
-            throw new PriceLowerThanZeroException("Precio menor que cero");
-        }
-    }
-
-    private void isTitleBlank(String title) {
-        if (title.isBlank()) {
-            throw new IllegalArgumentException("Título vacío");
-        }
     }
 }

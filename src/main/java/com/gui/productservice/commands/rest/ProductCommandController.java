@@ -54,9 +54,19 @@ public class ProductCommandController {
         return ResponseEntity.ok("product editado");
     }
 
-    @DeleteMapping
-    public ResponseEntity<?> deleteProduct() {
+    @DeleteMapping("delete/{id}/{title}")
+    public ResponseEntity<?> deleteProduct(@PathVariable("id") String id, @PathVariable("title") String title) {
+
+
 
         return ResponseEntity.ok("product eliminado");
+    }
+
+    @DeleteMapping
+    public ResponseEntity<?> deleteAllProducts() {
+
+
+
+        return ResponseEntity.ok("productos eliminados");
     }
 }

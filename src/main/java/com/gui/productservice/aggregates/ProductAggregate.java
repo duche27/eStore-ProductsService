@@ -27,9 +27,9 @@ public class ProductAggregate {
     @CommandHandler
     public ProductAggregate(CreateProductCommand createProductCommand) throws PriceLowerThanZeroException {
 
-//        // validaciones
-//        isPriceGreaterThanZero(createProductCommand.getPrice());
-//        isTitleBlank(createProductCommand.getTitle());
+        // validaciones
+        isPriceGreaterThanZero(createProductCommand.getPrice());
+        isTitleBlank(createProductCommand.getTitle());
 
         // creamos evento una vez pasadas las validaciones
         ProductCreatedEvent productCreatedEvent = new ProductCreatedEvent();
@@ -48,15 +48,15 @@ public class ProductAggregate {
         this.quantity = productCreatedEvent.getQuantity();
     }
 
-//    private void isPriceGreaterThanZero(BigDecimal price) {
-//        if (price.compareTo(BigDecimal.ZERO) <= 0) {
-//            throw new PriceLowerThanZeroException("Precio menor que cero");
-//        }
-//    }
-//
-//    private void isTitleBlank(String title) {
-//        if (title.isBlank()) {
-//            throw new IllegalArgumentException("Título vacío");
-//        }
-//    }
+    private void isPriceGreaterThanZero(BigDecimal price) {
+        if (price.compareTo(BigDecimal.ZERO) <= 0) {
+            throw new PriceLowerThanZeroException("Precio menor que cero");
+        }
+    }
+
+    private void isTitleBlank(String title) {
+        if (title.isBlank()) {
+            throw new IllegalArgumentException("Título vacío");
+        }
+    }
 }

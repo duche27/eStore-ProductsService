@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
+@ProcessingGroup("product-group")   // agrupado con ProductLookupEventsHandler para compartir hilo de ejecución (por rollbacks)
 public class ProductEventsHandler {
 
     private final ProductRepository productRepository;

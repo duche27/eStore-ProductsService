@@ -18,17 +18,10 @@ public class RestExceptionHandler {
         return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
     }
 
-//    @ExceptionHandler(PriceLowerThanZeroException.class)
-//    @ResponseStatus(value = HttpStatus.BAD_REQUEST)
-//    public @ResponseBody Error invalidPriceErrorHandler(PriceLowerThanZeroException e) {
-//
-//        return new Error(e.getMessage(), ZonedDateTime.now());
-//    }
-
     @ExceptionHandler
     public ResponseEntity<Error> noDataErrorHandler(NoDataFoundException e) {
 
-        Error error = new Error(e.getMessage(), ZonedDateTime.now());
+        Error error = new Error(e.getMessage());
 
         return new ResponseEntity<>(error, HttpStatus.NO_CONTENT);
     }
