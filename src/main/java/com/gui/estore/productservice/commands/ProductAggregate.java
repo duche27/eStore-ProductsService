@@ -1,9 +1,12 @@
-package com.gui.estore.productservice.aggregates;
+package com.gui.estore.productservice.commands;
 
+import com.gui.estore.core.commands.ReserveProductCommand;
+import com.gui.estore.core.events.ProductReservedEvent;
 import com.gui.estore.productservice.commands.CreateProductCommand;
 import com.gui.estore.productservice.exceptions.BlankTitleException;
 import com.gui.estore.productservice.exceptions.PriceLowerThanZeroException;
 import com.gui.estore.productservice.core.events.ProductCreatedEvent;
+import lombok.extern.slf4j.Slf4j;
 import org.axonframework.commandhandling.CommandHandler;
 import org.axonframework.eventsourcing.EventSourcingHandler;
 import org.axonframework.modelling.command.AggregateIdentifier;
@@ -13,21 +16,23 @@ import org.springframework.beans.BeanUtils;
 
 import java.math.BigDecimal;
 
-@Aggregate
+@Slf4j
+@Aggregate()
 public class ProductAggregate {
 
     @AggregateIdentifier
     private String productId;
     private String title;
     private BigDecimal price;
-    private Integer quantity;
+    private int quantity;
 
-    public ProductAggregate() { }
+    public ProductAggregate() {
+    }
 
     @CommandHandler
     public ProductAggregate(CreateProductCommand createProductCommand) {
 
-        // validaciones
+        // VALIDACIONES
         isPriceGreaterThanZero(createProductCommand.getPrice());
         isTitleBlank(createProductCommand.getTitle());
 
@@ -46,6 +51,32 @@ public class ProductAggregate {
         this.price = productCreatedEvent.getPrice();
         this.title = productCreatedEvent.getTitle();
         this.quantity = productCreatedEvent.getQuantity();
+    }
+
+    @CommandHandler
+    public void handle(ReserveProductCommand reserveProductCommand) {
+
+        // VALIDACIONES
+        // no necesitamos hacer query a la BD de entidades para saber el stock
+        // AXON recupera el estado cuando el AGGREGATE se carga (replica todos los eventos anteriores)
+        if (quantity < reserveProductCommand.getQuantity())
+            throw new IllegalArgumentException("No tenemos stock suficiente del producto " + reserveProductCommand.getProductId());
+
+        // creamos evento una vez pasadas las validaciones
+        ProductReservedEvent productReservedEvent = ProductReservedEvent.builder()
+                .orderId(reserveProductCommand.getOrderId())
+                .productId(reserveProductCommand.getProductId())
+                .quantity(reserveProductCommand.getQuantity())
+                .userId(reserveProductCommand.getUserId())
+                .build();
+
+        // publicamos evento y lo mandamos al eventHandler
+        AggregateLifecycle.apply(productReservedEvent);
+    }
+
+    @EventSourcingHandler
+    public void on(ProductReservedEvent productReservedEvent) {
+        this.quantity -= productReservedEvent.getQuantity();
     }
 
     private void isPriceGreaterThanZero(BigDecimal price) {

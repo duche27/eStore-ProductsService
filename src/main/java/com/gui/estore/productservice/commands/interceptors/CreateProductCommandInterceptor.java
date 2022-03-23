@@ -1,8 +1,8 @@
 package com.gui.estore.productservice.commands.interceptors;
 
 import com.gui.estore.productservice.core.events.data.ProductLookupRepository;
-import com.gui.estore.productservice.exceptions.ProductNotFoundException;
 import com.gui.estore.productservice.commands.CreateProductCommand;
+import com.gui.estore.productservice.exceptions.ProductNotFoundException;
 import lombok.extern.slf4j.Slf4j;
 import org.axonframework.commandhandling.CommandMessage;
 import org.axonframework.messaging.MessageDispatchInterceptor;

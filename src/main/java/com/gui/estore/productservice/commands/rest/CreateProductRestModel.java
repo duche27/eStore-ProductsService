@@ -11,9 +11,6 @@ import javax.validation.constraints.NotBlank;
 import java.math.BigDecimal;
 
 @Data
-@AllArgsConstructor
-@NoArgsConstructor
-@Builder
 public class CreateProductRestModel {
 
 //    @NotBlank(message = "Title must be informed")
