@@ -35,6 +35,7 @@ public class ProductQueryController {
         FindProductsQuery findProductsQuery = new FindProductsQuery();
 
         // join() porque devuelve un CompletableFuture
+        // la manda al QUERY HANDLER
         List<ProductRestModel> products = queryGateway.query(findProductsQuery, ResponseTypes.multipleInstancesOf(ProductRestModel.class)).join();
 
         return products;
