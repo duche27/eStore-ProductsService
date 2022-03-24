@@ -8,7 +8,8 @@ import org.axonframework.eventhandling.EventHandler;
 import org.springframework.stereotype.Component;
 
 @Component
-@ProcessingGroup("product-group")      // agrupado con ProductEventsHandler para compartir hilo de ejecución (por rollbacks)
+@ProcessingGroup("product-group")
+// agrupado con ProductEventsHandler para compartir hilo de ejecución (por rollbacks)
 public class ProductLookupEventsHandler {
 
     ProductLookupRepository productLookupRepository;

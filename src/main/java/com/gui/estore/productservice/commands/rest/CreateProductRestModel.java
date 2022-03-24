@@ -13,10 +13,10 @@ import java.math.BigDecimal;
 @Data
 public class CreateProductRestModel {
 
-//    @NotBlank(message = "Title must be informed")
+    //    @NotBlank(message = "Title must be informed")
     private String title;
 
-//    @Min(value = 1, message = "Price must be above 0")
+    //    @Min(value = 1, message = "Price must be above 0")
     private BigDecimal price;
 
     @Min(value = 1, message = "Quantity cannot be lower than 1")

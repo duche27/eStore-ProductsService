@@ -14,7 +14,8 @@ import org.springframework.stereotype.Component;
 
 @Slf4j
 @Component
-@ProcessingGroup("product-group")   // agrupado con ProductLookupEventsHandler para compartir hilo de ejecución (por rollbacks)
+@ProcessingGroup("product-group")
+// agrupado con ProductLookupEventsHandler para compartir hilo de ejecución (por rollbacks)
 public class ProductEventsHandler {
 
     private final ProductRepository productRepository;
