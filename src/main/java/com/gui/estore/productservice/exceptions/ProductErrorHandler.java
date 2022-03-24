@@ -48,6 +48,14 @@ public class ProductErrorHandler {
         return new ResponseEntity<>(errorMessage, HttpStatus.NO_CONTENT);
     }
 
+    @ExceptionHandler(OutOfStockException.class)
+    public ResponseEntity<ErrorMessage> outOfStockErrorHandler(OutOfStockException e) {
+
+        ErrorMessage errorMessage = new ErrorMessage(e.getMessage());
+
+        return new ResponseEntity<>(errorMessage, HttpStatus.NOT_MODIFIED);
+    }
+
     @ExceptionHandler(PriceLowerThanZeroException.class)
     public ResponseEntity<ErrorMessage> invalidPriceErrorHandler(PriceLowerThanZeroException e) {
 

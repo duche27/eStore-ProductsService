@@ -64,7 +64,7 @@ public class ProductEventsHandler {
             e.printStackTrace();
         }
 
-        log.info("ProductReservedEvent handled in HANDLER! OrderId: " + productReservedEvent.getOrderId() + " - productId: "
+        log.info("ProductReservedEvent handled in PRODUCT HANDLER! Updated on DB: OrderId: " + productReservedEvent.getOrderId() + " - productId: "
                 + productReservedEvent.getProductId());
     }
 }

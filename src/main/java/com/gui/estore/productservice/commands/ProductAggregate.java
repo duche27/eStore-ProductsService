@@ -2,8 +2,8 @@ package com.gui.estore.productservice.commands;
 
 import com.gui.estore.core.commands.ReserveProductCommand;
 import com.gui.estore.core.events.ProductReservedEvent;
-import com.gui.estore.productservice.commands.CreateProductCommand;
 import com.gui.estore.productservice.exceptions.BlankTitleException;
+import com.gui.estore.productservice.exceptions.OutOfStockException;
 import com.gui.estore.productservice.exceptions.PriceLowerThanZeroException;
 import com.gui.estore.productservice.core.events.ProductCreatedEvent;
 import lombok.extern.slf4j.Slf4j;
@@ -59,8 +59,9 @@ public class ProductAggregate {
         // VALIDACIONES
         // no necesitamos hacer query a la BD de entidades para saber el stock
         // AXON recupera el estado cuando el AGGREGATE se carga (replica todos los eventos anteriores)
-        if (quantity < reserveProductCommand.getQuantity())
-            throw new IllegalArgumentException("No tenemos stock suficiente del producto " + reserveProductCommand.getProductId());
+        if (quantity < reserveProductCommand.getQuantity()) {
+            throw new RuntimeException("No tenemos stock suficiente del producto " + reserveProductCommand.getProductId());
+        }
 
         // creamos evento una vez pasadas las validaciones
         ProductReservedEvent productReservedEvent = ProductReservedEvent.builder()
