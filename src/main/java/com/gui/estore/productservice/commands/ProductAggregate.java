@@ -1,6 +1,8 @@
 package com.gui.estore.productservice.commands;
 
+import com.gui.estore.core.commands.CancelProductReservationCommand;
 import com.gui.estore.core.commands.ReserveProductCommand;
+import com.gui.estore.core.events.ProductReservationCancelledEvent;
 import com.gui.estore.core.events.ProductReservedEvent;
 import com.gui.estore.productservice.exceptions.BlankTitleException;
 import com.gui.estore.productservice.exceptions.OutOfStockException;
@@ -78,6 +80,26 @@ public class ProductAggregate {
     @EventSourcingHandler
     public void on(ProductReservedEvent productReservedEvent) {
         this.quantity -= productReservedEvent.getQuantity();
+    }
+
+    @CommandHandler
+    public void handle(CancelProductReservationCommand cancelProductReservationCommand) {
+
+        ProductReservationCancelledEvent productReservationCancelledEvent = ProductReservationCancelledEvent.builder()
+                .orderId(cancelProductReservationCommand.getOrderId())
+                .productId(cancelProductReservationCommand.getProductId())
+                .quantity(cancelProductReservationCommand.getQuantity())
+                .userId(cancelProductReservationCommand.getUserId())
+                .reason(cancelProductReservationCommand.getReason())
+                .build();
+
+        AggregateLifecycle.apply(productReservationCancelledEvent);
+    }
+
+    @EventSourcingHandler
+    public void on(ProductReservationCancelledEvent productReservationCancelledEvent) {
+
+        this.quantity += productReservationCancelledEvent.getQuantity();
     }
 
     private void isPriceGreaterThanZero(BigDecimal price) {

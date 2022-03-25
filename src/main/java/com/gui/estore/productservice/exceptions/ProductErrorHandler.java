@@ -11,6 +11,13 @@ import org.springframework.web.context.request.WebRequest;
 @ControllerAdvice
 public class ProductErrorHandler {
 
+    @ExceptionHandler(value = {ProductNotFoundException.class})
+    public ResponseEntity<ErrorMessage> handleProductNotFoundException(ProductNotFoundException e) {
+
+        ErrorMessage errorMessage = new ErrorMessage(e.getMessage());
+        return new ResponseEntity<>(errorMessage, new HttpHeaders(), HttpStatus.NOT_FOUND);
+    }
+
     @ExceptionHandler(value = {ProductAlreadyExistsException.class})
     public ResponseEntity<ErrorMessage> handleProductAlreadyExistsException(ProductAlreadyExistsException e) {
 

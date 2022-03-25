@@ -3,8 +3,10 @@ package com.gui.estore.productservice.repositories;
 import com.gui.estore.productservice.model.ProductEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 
+import java.util.Optional;
+
 public interface ProductRepository extends JpaRepository<ProductEntity, String> {
 
-    ProductEntity findByProductId(String productId);
-    ProductEntity findByProductIdOrTitle(String productId, String title);
+    Optional<ProductEntity> findByProductId(String productId);
+    Optional<ProductEntity> findByProductIdOrTitle(String productId, String title);
 }

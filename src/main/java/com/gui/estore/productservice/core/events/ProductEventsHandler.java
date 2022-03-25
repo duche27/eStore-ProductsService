@@ -1,6 +1,8 @@
 package com.gui.estore.productservice.core.events;
 
+import com.gui.estore.core.events.ProductReservationCancelledEvent;
 import com.gui.estore.core.events.ProductReservedEvent;
+import com.gui.estore.productservice.exceptions.ProductNotFoundException;
 import com.gui.estore.productservice.model.ProductEntity;
 import com.gui.estore.productservice.core.events.ProductCreatedEvent;
 import com.gui.estore.productservice.repositories.ProductRepository;
@@ -55,17 +57,33 @@ public class ProductEventsHandler {
     @EventHandler
     public void on(ProductReservedEvent productReservedEvent) {
 
-        ProductEntity productEntity = productRepository.findByProductId(productReservedEvent.getProductId());
+        ProductEntity product = productRepository.findByProductId(productReservedEvent.getProductId())
+                        .orElseThrow(() -> new ProductNotFoundException("Producto no encontrado"));
 
-        productEntity.setQuantity(productEntity.getQuantity() - productReservedEvent.getQuantity());
+        product.setQuantity(product.getQuantity() - productReservedEvent.getQuantity());
 
         try {
-            productRepository.save(productEntity);
+            productRepository.save(product);
         } catch (Exception e) {
             e.printStackTrace();
         }
 
         log.info("ProductReservedEvent handled in PRODUCT HANDLER! Updated on DB: OrderId: " + productReservedEvent.getOrderId() + " - productId: "
                 + productReservedEvent.getProductId());
+    }
+
+    @EventHandler
+    public void on(ProductReservationCancelledEvent productReservationCancelledEvent) {
+
+        ProductEntity product = productRepository.findByProductId(productReservationCancelledEvent.getProductId())
+                .orElseThrow(() -> new ProductNotFoundException("Producto no encontrado"));
+
+        product.setQuantity(product.getQuantity() + productReservationCancelledEvent.getQuantity());
+
+        try {
+            productRepository.save(product);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }
