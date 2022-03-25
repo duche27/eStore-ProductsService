@@ -2,7 +2,7 @@ package com.gui.estore.productservice.commands.interceptors;
 
 import com.gui.estore.productservice.core.events.data.ProductLookupRepository;
 import com.gui.estore.productservice.commands.CreateProductCommand;
-import com.gui.estore.productservice.exceptions.ProductNotFoundException;
+import com.gui.estore.productservice.exceptions.ProductAlreadyExistsException;
 import lombok.extern.slf4j.Slf4j;
 import org.axonframework.commandhandling.CommandMessage;
 import org.axonframework.messaging.MessageDispatchInterceptor;
@@ -37,7 +37,7 @@ public class CreateProductCommandInterceptor implements MessageDispatchIntercept
 
                 if (productLookupRepository.findByProductIdOrTitle(createProductCommand.getProductId(), createProductCommand.getTitle())
                         .isPresent())
-                    throw new ProductNotFoundException("Product with id " + createProductCommand.getProductId() +
+                    throw new ProductAlreadyExistsException("Product with id " + createProductCommand.getProductId() +
                             " or title " + createProductCommand.getTitle() + " already exists");
             }
 

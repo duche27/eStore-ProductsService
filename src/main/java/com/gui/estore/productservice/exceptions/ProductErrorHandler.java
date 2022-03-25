@@ -11,33 +11,11 @@ import org.springframework.web.context.request.WebRequest;
 @ControllerAdvice
 public class ProductErrorHandler {
 
-    @ExceptionHandler(value = {IllegalStateException.class})
-    public ResponseEntity<ErrorMessage> handleIllegalStateException(IllegalStateException e) {
-
-        ErrorMessage errorMessage = new ErrorMessage(e.getMessage());
-        return new ResponseEntity<>(errorMessage, new HttpHeaders(), HttpStatus.INTERNAL_SERVER_ERROR);
-    }
-
-//    @ExceptionHandler(value = {RuntimeException.class})
-//    public ResponseEntity<ErrorMessage> handleRuntimeException(RuntimeException e) {
-//
-//        ErrorMessage errorMessage = new ErrorMessage(e.getMessage());
-//        return new ResponseEntity<>(errorMessage, new HttpHeaders(), HttpStatus.BAD_REQUEST);
-//    }
-
-    // excepciones del AGGREGATE
-    @ExceptionHandler(value = {CommandExecutionException.class})
-    public ResponseEntity<ErrorMessage> handleCommandExecutionException(CommandExecutionException e, WebRequest request) {
+    @ExceptionHandler(value = {ProductAlreadyExistsException.class})
+    public ResponseEntity<ErrorMessage> handleProductAlreadyExistsException(ProductAlreadyExistsException e) {
 
         ErrorMessage errorMessage = new ErrorMessage(e.getMessage());
         return new ResponseEntity<>(errorMessage, new HttpHeaders(), HttpStatus.BAD_REQUEST);
-    }
-
-    @ExceptionHandler(value = {Exception.class})
-    public ResponseEntity<ErrorMessage> handleOtherException(Exception e, WebRequest request) {
-
-        ErrorMessage errorMessage = new ErrorMessage(e.getMessage());
-        return new ResponseEntity<>(errorMessage, new HttpHeaders(), HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     @ExceptionHandler(NoDataFoundException.class)
@@ -70,5 +48,34 @@ public class ProductErrorHandler {
         ErrorMessage errorMessage = new ErrorMessage(e.getMessage());
 
         return new ResponseEntity<>(errorMessage, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(value = {RuntimeException.class})
+    public ResponseEntity<ErrorMessage> handleRuntimeException(RuntimeException e) {
+
+        ErrorMessage errorMessage = new ErrorMessage(e.getMessage());
+        return new ResponseEntity<>(errorMessage, new HttpHeaders(), HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+    // excepciones del AGGREGATE
+    @ExceptionHandler(value = {CommandExecutionException.class})
+    public ResponseEntity<ErrorMessage> handleCommandExecutionException(CommandExecutionException e, WebRequest request) {
+
+        ErrorMessage errorMessage = new ErrorMessage(e.getMessage());
+        return new ResponseEntity<>(errorMessage, new HttpHeaders(), HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+    @ExceptionHandler(value = {IllegalStateException.class})
+    public ResponseEntity<ErrorMessage> handleIllegalStateException(IllegalStateException e) {
+
+        ErrorMessage errorMessage = new ErrorMessage(e.getMessage());
+        return new ResponseEntity<>(errorMessage, new HttpHeaders(), HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+    @ExceptionHandler(value = {Exception.class})
+    public ResponseEntity<ErrorMessage> handleOtherException(Exception e, WebRequest request) {
+
+        ErrorMessage errorMessage = new ErrorMessage(e.getMessage());
+        return new ResponseEntity<>(errorMessage, new HttpHeaders(), HttpStatus.INTERNAL_SERVER_ERROR);
     }
 }
