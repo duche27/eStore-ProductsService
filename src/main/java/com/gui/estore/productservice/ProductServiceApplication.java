@@ -4,11 +4,15 @@ import com.gui.estore.productservice.commands.interceptors.CreateProductCommandI
 import com.gui.estore.productservice.exceptions.ProductServiceEventHandler;
 import org.axonframework.commandhandling.CommandBus;
 import org.axonframework.config.EventProcessingConfigurer;
+import org.axonframework.eventsourcing.EventCountSnapshotTriggerDefinition;
+import org.axonframework.eventsourcing.SnapshotTriggerDefinition;
+import org.axonframework.eventsourcing.Snapshotter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 import org.springframework.context.ApplicationContext;
+import org.springframework.context.annotation.Bean;
 
 @EnableDiscoveryClient
 @SpringBootApplication
@@ -35,6 +39,13 @@ public class ProductServiceApplication {
         // de AXON
 //        config.registerListenerInvocationErrorHandler("product-group",
 //                conf -> PropagatingErrorHandler.instance());
+    }
+
+    @Bean(name = "productSnapshotTriggerDefinition")
+    public SnapshotTriggerDefinition productSnapshotTriggerDefinition(Snapshotter snapshotter) {
+
+        // crea snapshots cada 3 eventos
+        return new EventCountSnapshotTriggerDefinition(snapshotter, 3);
     }
 
 }
