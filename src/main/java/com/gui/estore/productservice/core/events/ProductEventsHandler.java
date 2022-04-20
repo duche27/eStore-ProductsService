@@ -28,19 +28,6 @@ public class ProductEventsHandler {
         this.productRepository = productRepository;
     }
 
-    // lanza la excepción controlada si no persiste productEntity
-    // sin persistir nada, es transaccional
-    // de aquí va a ProductServiceEventHandler - después a ProductErrorHandler - excepción controlada
-    @ExceptionHandler(resultType = Exception.class)
-    private void handle(Exception exception) throws Exception {
-        throw exception;
-    }
-
-    @ExceptionHandler(resultType = IllegalArgumentException.class)
-    private void handle(IllegalArgumentException exception) throws IllegalArgumentException {
-//        throw IllegalArgumentException;
-    }
-
     @EventHandler
     public void on(ProductCreatedEvent productCreatedEvent) {
 
@@ -91,5 +78,18 @@ public class ProductEventsHandler {
     @ResetHandler
     public void reset() {
         productRepository.deleteAll();
+    }
+
+    // lanza la excepción controlada si no persiste productEntity
+    // sin persistir nada, es transaccional
+    // de aquí va a ProductServiceEventHandler - después a ProductErrorHandler - excepción controlada
+    @ExceptionHandler(resultType = Exception.class)
+    private void handle(Exception exception) throws Exception {
+        throw exception;
+    }
+
+    @ExceptionHandler(resultType = IllegalArgumentException.class)
+    private void handle(IllegalArgumentException exception) throws IllegalArgumentException {
+//        throw IllegalArgumentException;
     }
 }
