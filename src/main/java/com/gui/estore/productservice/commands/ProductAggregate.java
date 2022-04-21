@@ -60,10 +60,9 @@ public class ProductAggregate {
 
         // VALIDACIONES
         // no necesitamos hacer query a la BD de entidades para saber el stock
-        // AXON recupera el estado cuando el AGGREGATE se carga (replica todos los eventos anteriores)
-        if (quantity < reserveProductCommand.getQuantity()) {
+        // xq AXON recupera el estado cuando el AGGREGATE se carga (replica todos los eventos anteriores)
+        if (quantity < reserveProductCommand.getQuantity())
             throw new OutOfStockException("No tenemos stock suficiente del producto " + reserveProductCommand.getProductId());
-        }
 
         // creamos evento una vez pasadas las validaciones
         ProductReservedEvent productReservedEvent = ProductReservedEvent.builder()

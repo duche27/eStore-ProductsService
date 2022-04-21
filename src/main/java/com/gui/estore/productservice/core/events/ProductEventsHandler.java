@@ -48,6 +48,7 @@ public class ProductEventsHandler {
         ProductEntity product = productRepository.findByProductId(productReservedEvent.getProductId())
                         .orElseThrow(() -> new ProductNotFoundException("Producto no encontrado"));
 
+        // restamos existencias reservadas
         product.setQuantity(product.getQuantity() - productReservedEvent.getQuantity());
 
         try {
@@ -55,9 +56,6 @@ public class ProductEventsHandler {
         } catch (Exception e) {
             e.printStackTrace();
         }
-
-        log.info("ProductReservedEvent handled in PRODUCT HANDLER! Updated on DB: OrderId: " + productReservedEvent.getOrderId() + " - productId: "
-                + productReservedEvent.getProductId());
     }
 
     @EventHandler
@@ -66,6 +64,7 @@ public class ProductEventsHandler {
         ProductEntity product = productRepository.findByProductId(productReservationCancelledEvent.getProductId())
                 .orElseThrow(() -> new ProductNotFoundException("Producto no encontrado"));
 
+        // sumamos existencias de producto no comprado
         product.setQuantity(product.getQuantity() + productReservationCancelledEvent.getQuantity());
 
         try {
@@ -90,6 +89,5 @@ public class ProductEventsHandler {
 
     @ExceptionHandler(resultType = IllegalArgumentException.class)
     private void handle(IllegalArgumentException exception) throws IllegalArgumentException {
-//        throw IllegalArgumentException;
-    }
+        throw exception;    }
 }
