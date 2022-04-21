@@ -5,9 +5,14 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.FieldError;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.WebRequest;
+
+import java.util.HashMap;
+import java.util.Map;
 
 @ControllerAdvice
 public class ProductErrorHandler {
@@ -66,13 +71,26 @@ public class ProductErrorHandler {
         return new ResponseEntity<>(errorMessage, new HttpHeaders(), HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
-    // para manejar excepciones de validaciones de hibernate
+    // para manejar excepciones de validaciones de constraints de hibernate
     @ExceptionHandler(DataIntegrityViolationException.class)
-    public ResponseEntity<Error> fieldsRestValidationHandler(DataIntegrityViolationException e) {
+    public ResponseEntity<ErrorMessage> dataIntegrityViolationHandler(DataIntegrityViolationException e) {
 
-        Error error = new Error(e.getMostSpecificCause().getMessage());
+        ErrorMessage error = new ErrorMessage(e.getMostSpecificCause().getMessage());
 
         return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
+    }
+
+    // para manejar excepciones de validaciones de hibernate con @Valid
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ResponseEntity<ErrorMessage> fieldsValidationExceptions(MethodArgumentNotValidException e) {
+
+        Map<String, String> errors = new HashMap<>();
+        e.getBindingResult().getAllErrors().forEach((error) -> {
+            String fieldName = ((FieldError) error).getField();
+            String errorMessage = error.getDefaultMessage();
+            errors.put(fieldName, errorMessage);
+        });
+        return new ResponseEntity<>(new ErrorMessage(errors.toString()), HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(value = {IllegalStateException.class})
